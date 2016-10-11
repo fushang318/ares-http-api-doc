@@ -1,0 +1,97 @@
+swagger: '2.0'
+info:
+  description: >-
+    ares http api doc
+  version: 0.0.1
+  title: ares http api doc
+basePath: /
+tags:
+  - name: 用户
+paths:
+
+  "/api/auth/sign_up":
+    post:
+      tags:
+        - 用户
+      summary: 提交用户注册信息
+      description: 提交用户注册信息
+      operationId: auth_sign_up
+      produces:
+        - multipart/form-data
+      parameters:
+        - name: phone
+          in: formData
+          type: integer
+          description: 手机号
+          required: true
+        - name: name
+          in: formData
+          type: string
+          description: 姓名
+          required: true
+        - name: card_type
+          description: 证件类型
+          required: true
+          in: formData
+          type: string
+          enum:
+            - 身份证
+            - 军官证
+        - name: card_number
+          in: formData
+          type: integer
+          description: 证件号码
+          required: true
+        - name: password
+          in: formData
+          type: string
+          format: password
+          description: 密码
+          required: true
+        - name: password_confirmation
+          in: formData
+          type: string
+          format: password
+          description: 确认密码
+          required: true
+        - name: phome_message_confirmation_number
+          in: formData
+          type: integer
+          description: 短信验证
+          required: true
+        - name: invitation_code
+          in: formData
+          type: string
+          description: 邀请码
+      responses:
+        '200':
+          description: 注册成功
+          headers:
+            "Set-Cookie":
+              description: "cookie 信息"
+              type: string
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: 注册失败
+          schema:
+            $ref: '#/definitions/SignUpFailure'
+definitions:
+  User:
+    type: object
+    properties:
+      phone:
+        type: integer  
+      name:
+        type: string  
+      card_type:
+        type: string
+      card_number:
+        type: integer  
+  SignUpFailure:
+    type: object
+    properties:
+      error:
+        type: string
+        enum:
+          - UserNameAlreadyExists
