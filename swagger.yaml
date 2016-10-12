@@ -8,7 +8,44 @@ basePath: /
 tags:
   - name: 用户
 paths:
+  "/api/auth/sign_up_message":
+    post:
+      tags:
+        - 用户
+      summary: 发送手机注册验证码短信
+      description: 发送手机注册验证码短信
+      operationId: auth_sign_up_message
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: phone
+          in: formData
+          type: integer
+          description: 手机号
+          required: true
+      produces:
+        - application/json
 
+      responses:
+        200:
+          description: 发送成功
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                enum:
+                  - 200
+        400:
+          description: 发送失败
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                enum:
+                  - PhoneAlreadyExists
+                  - ServiceFailure
   "/api/auth/sign_up":
     post:
       tags:
@@ -16,8 +53,10 @@ paths:
       summary: 提交用户注册信息
       description: 提交用户注册信息
       operationId: auth_sign_up
-      produces:
+      consumes:
         - multipart/form-data
+      produces:
+        - application/json
       parameters:
         - name: phone
           in: formData
