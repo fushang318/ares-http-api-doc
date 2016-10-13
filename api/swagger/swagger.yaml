@@ -6,12 +6,12 @@ info:
   title: ares http api doc
 basePath: /
 tags:
-  - name: 用户
+  - name: User
 paths:
   "/api/auth/sign_up_message":
     post:
       tags:
-        - 用户
+        - User
       summary: 发送手机注册验证码短信
       description: 发送手机注册验证码短信
       operationId: auth_sign_up_message
@@ -28,7 +28,13 @@ paths:
 
       responses:
         200:
-          description: 发送成功
+          description: |
+            发送成功
+            ```json
+              {
+                status: 200
+              }
+            ```
           schema:
             type: object
             properties:
@@ -36,8 +42,16 @@ paths:
                 type: integer
                 enum:
                   - 200
-        400:
-          description: 发送失败
+        422:
+          description: |
+            发送失败
+            ```json
+              {
+                errors: {
+                  phone: "手机号已被使用"
+                }
+              }
+            ```
           schema:
             type: object
             properties:
@@ -49,7 +63,7 @@ paths:
   "/api/auth/sign_up":
     post:
       tags:
-        - 用户
+        - User
       summary: 提交用户注册信息
       description: 提交用户注册信息
       operationId: auth_sign_up
@@ -104,17 +118,39 @@ paths:
           description: 邀请码
       responses:
         '200':
-          description: 注册成功
+          description: |
+            注册成功
+            ```json
+              {
+                
+                  phone: "13722223333",
+                  name: "张三",
+                  card_type: "身份证",
+                  card_number: "130123190012212345"
+              }
+            ```
           headers:
             "Set-Cookie":
               description: "cookie 信息"
               type: string
           schema:
             $ref: '#/definitions/User'
-        '400':
-          description: 注册失败
+        '422':
+          description: |
+            注册失败
+            ```json
+              {
+                errors: {
+                  phone: "手机号已被使用",
+                  name: "用户名已被使用"
+                }
+              }
+            ```
           schema:
-            $ref: '#/definitions/SignUpFailure'
+            type: object
+            properties:
+              errors:
+                type: object
 definitions:
   User:
     type: object
@@ -127,10 +163,3 @@ definitions:
         type: string
       card_number:
         type: integer  
-  SignUpFailure:
-    type: object
-    properties:
-      error:
-        type: string
-        enum:
-          - UserNameAlreadyExists
