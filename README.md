@@ -13,7 +13,7 @@ swagger project edit -s --host 0 -p 8080
 ```
 
 ## 查看 api
-[点我查看 http api 文档](https://fushang318.github.io/swagger-ui/?url=https://raw.githubusercontent.com/fushang318/ares-http-api-doc/master/api/swagger/swagger.yaml)
+[点我查看 http api 文档](https://fushang318.github.io/swagger-ui/dist/?url=https://raw.githubusercontent.com/fushang318/ares-http-api-doc/master/api/swagger/swagger.yaml)
 
 ## OpenAPI Specification
 [文档](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md)
