@@ -6,7 +6,8 @@ info:
   title: ares http api doc
 basePath: /
 tags:
-  - name: User
+  - name: User Auth
+  - name: User Finance
 paths:
   "/api/auth/sign_up_message":
     post:
@@ -151,6 +152,45 @@ paths:
             properties:
               errors:
                 type: object
+  "/api/user_finance/info":
+    get:
+      tags:
+        - User Finance
+      summary: 获取当前用户金融信息
+      description: 获取当前用户金融信息
+      operationId: user_finance_info
+      produces:
+        - application/json
+      parameters:
+        - name: Cookie
+          in: header
+          type: string
+          description: Cookie 信息
+          required: true
+      responses:
+        '200':
+          description: |
+            成功获取当前用户金融信息
+            ```json
+              {
+                
+                  bank_card_count: 2,
+                  balance: 1000
+              }
+            ```
+          schema:
+            type: object
+            properties:
+              bank_card_count:
+                type: integer  
+              balance:
+                type: string 
+        "411":
+          description: |
+            没有登录
+          schema:
+            type: string
+
 definitions:
   User:
     type: object
