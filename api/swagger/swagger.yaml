@@ -6,16 +6,17 @@ info:
   title: ares http api doc
 basePath: /
 tags:
-  - name: User Auth
+  - name: Message Verification
+  - name: User Base
   - name: User Finance
 paths:
-  "/api/auth/sign_up_message":
+  "/api/message_verification/send":
     post:
       tags:
-        - User
-      summary: 发送手机注册验证码短信
-      description: 发送手机注册验证码短信
-      operationId: auth_sign_up_message
+        - Message Verification
+      summary: 请求发送手机验证码
+      description: 请求发送手机验证码
+      operationId: message_verification_send
       consumes:
         - multipart/form-data
       parameters:
@@ -26,7 +27,6 @@ paths:
           required: true
       produces:
         - application/json
-
       responses:
         200:
           description: |
@@ -43,28 +43,64 @@ paths:
                 type: integer
                 enum:
                   - 200
+  "/api/message_verification/verify":
+    post:
+      tags:
+        - Message Verification
+      summary: 检查手机验证码是否正确
+      description: 检查提交的手机验证码是否和该手机最后收到的手机验证码相匹配
+      operationId: message_verification_verify
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: phone
+          in: formData
+          type: integer
+          description: 手机号
+          required: true
+        - name: verify_code
+          in: formData
+          type: string
+          description: 手机验证码
+          required: true
+      produces:
+        - application/json
+      responses:
+        200:
+          description: |
+            验证成功
+            ```json
+              {
+                status: 200
+              }
+            ```
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                enum:
+                  - 200
         422:
           description: |
-            发送失败
+            验证失败
             ```json
               {
                 errors: {
-                  phone: "手机号已被使用"
+                  verify_code: "验证码错误"
                 }
               }
             ```
           schema:
             type: object
             properties:
-              error:
-                type: string
-                enum:
-                  - PhoneAlreadyExists
-                  - ServiceFailure
+              errors:
+                type: object
+            
   "/api/auth/sign_up":
     post:
       tags:
-        - User
+        - User Base
       summary: 提交用户注册信息
       description: 提交用户注册信息
       operationId: auth_sign_up
@@ -102,17 +138,7 @@ paths:
           format: password
           description: 密码
           required: true
-        - name: password_confirmation
-          in: formData
-          type: string
-          format: password
-          description: 确认密码
-          required: true
-        - name: phome_message_confirmation_number
-          in: formData
-          type: integer
-          description: 短信验证
-          required: true
+
         - name: invitation_code
           in: formData
           type: string
@@ -123,11 +149,50 @@ paths:
             注册成功
             ```json
               {
-                
-                  phone: "13722223333",
-                  name: "张三",
-                  card_type: "身份证",
-                  card_number: "130123190012212345"
+                status: 200
+              }
+            ```
+        '422':
+          description: |
+            注册失败
+            ```json
+              // 有疑惑
+            ```
+          schema:
+            type: object
+            properties:
+              errors:
+                type: object
+  "/api/auth/sign_in":
+    post:
+      tags:
+        - User Base
+      summary: 用户登录
+      description: 用户登录
+      operationId: auth_sign_in
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: phone
+          in: formData
+          type: string
+          description: 手机号
+          required: true
+        - name: password
+          in: formData
+          type: string
+          format: password
+          description: 密码
+          required: true
+      responses:
+        '200':
+          description: |
+            登录成功
+            ```json
+              {
+                status: 200
               }
             ```
           headers:
@@ -135,16 +200,20 @@ paths:
               description: "cookie 信息"
               type: string
           schema:
-            $ref: '#/definitions/User'
-        '422':
+            type: object
+        '411':
           description: |
-            注册失败
+            登录失败
             ```json
               {
-                errors: {
-                  phone: "手机号已被使用",
-                  name: "用户名已被使用"
-                }
+                status: 411,
+                message: "用户不存在"
+              }
+            ```
+            ```json
+              {
+                status: 411,
+                message: "用户名或密码不正确"
               }
             ```
           schema:
